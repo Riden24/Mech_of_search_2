@@ -16,7 +16,7 @@ HEADERS = {
 # Wikipedia parent page to start from
 START_URL = "https://en.wikipedia.org/wiki/Wikipedia:Featured_pictures"
 
-def get_wikipedia_images(start_url, max_images=1000, max_current_count=20):
+def get_wikipedia_images(start_url, max_images=1000, max_current_count=5):
     visited_subpages = set()
     image_count = 0
     metadata_list = []
