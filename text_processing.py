@@ -68,16 +68,20 @@ def build_inverted_index(documents):
     inverted_index = defaultdict(list)  # {term: [(doc_id, freq), ...]}
     doc_id = 0
     for document in documents:
-        title = document.get("title", "")  # Default to an empty string if 'title' is missing
-        image_url = document.get("image_url", "")  # Default to an empty string if 'image_url' is missing
-        file_page_url = document.get("file_page_url", "")  # Default to an empty string if 'file_page_url' is missing
-        artist = document.get("Artist", "")  # Default to an empty string if 'Artist' is missing
-        image_description = document.get("ImageDescription", "")  # Default to an empty string if 'ImageDescription' is missing
+        title = document.get("title", "")  
+        image_url = document.get("image_url", "") 
+        file_page_url = document.get("file_page_url", "") 
+        artist = document.get("Artist", "")  
+        image_description = document.get("ImageDescription", "")  
+        caption = document.get("caption", "")
+        # clip_label = document.get("clip_label", "")
+
+
         
         if not title:  # Skip documents without text
             continue
         else:
-            processed_text = preprocess_text(title + " " + image_url + " " + file_page_url + " " + artist + " " + image_description )  # Combine title & text
+            processed_text = preprocess_text(title + " " + image_url + " " + file_page_url + " " + artist + " " + image_description + " " + caption + "")  # Combine title & text
             term_freq = defaultdict(int)
             
             # Count term frequency in the document
@@ -105,7 +109,7 @@ def compute_tf_idf(inverted_index, documents):
     # Map document titles to their preprocessed text lengths
     doc_lengths = {
         doc.get("title", ""): len(preprocess_text(
-            doc.get("ImageDescription", "") or doc.get("Artist", "") or doc.get("title", "")
+            doc.get("ImageDescription", "") or doc.get("Artist", "") or doc.get("title", "") or doc.get("image_url", "") or doc.get("file_page_url", "") or doc.get("caption", "") 
         ))
         for doc in documents
     }
@@ -135,17 +139,19 @@ def compute_tf_idf(inverted_index, documents):
 
 
 
-# test inverting matrix
-documents = read_json('./image_metadata_final.json')
-inverted_index = build_inverted_index(documents)
-print(dict(list(inverted_index.items())[:5]))  # Display first 5 terms in the index
+# # test inverting matrix
+# documents = read_json('./fused_image_data.json')
+# inverted_index = build_inverted_index(documents)
+# print(dict(list(inverted_index.items())[:5]))  # Display first 5 terms in the index
+# with open("inverted_index_matrix.json", "w") as json_file:
+#     json.dump(inverted_index, json_file, indent=4)
 
-tf_idf = compute_tf_idf(inverted_index, documents)
-print(dict(list(tf_idf.items())[:5]))  # Display first 5 documents in the TF-IDF matrix
+# tf_idf = compute_tf_idf(inverted_index, documents)
+# print(dict(list(tf_idf.items())[:5]))  # Display first 5 documents in the TF-IDF matrix
 
-# save tf_idf matrix to json
-with open("tf_idf_matrix.json", "w") as json_file:
-    json.dump(tf_idf, json_file, indent=4)
+# # save tf_idf matrix to json
+# with open("tf_idf_matrix.json", "w") as json_file:
+#     json.dump(tf_idf, json_file, indent=4)
 
 
 # # test the preprocessing
